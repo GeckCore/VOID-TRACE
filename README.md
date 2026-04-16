@@ -121,7 +121,7 @@ Verás mucho texto desfilar por pantalla — es normal, está descargando y comp
 Cuando termine verás algo como:
 
 ```
-   Compiling VOID-TRACE v1.0.0
+   Compiling ai-ghost-hunter v1.0.0
     Finished release [optimized] target(s) in 4m 32s
 ```
 
