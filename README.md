@@ -64,7 +64,7 @@ Git permite a la herramienta descargar repositorios de GitHub automáticamente.
 
 ---
 
-### Paso 4 — Descargar AI-Ghost-Hunter
+### Paso 4 — Descargar VOID-TRACE
 
 Tienes dos opciones:
 
