@@ -1,0 +1,49 @@
+[package]
+name        = "ai-ghost-hunter"
+version     = "1.0.0"
+edition     = "2021"
+description = "Stylometric AST analyzer for AI-generated code detection"
+authors     = ["AI-Ghost-Hunter"]
+
+[[bin]]
+name = "aigh"
+path = "src/main.rs"
+
+[dependencies]
+# Async runtime
+tokio    = { version = "1",    features = ["full"] }
+
+# Error handling
+anyhow   = "1"
+
+# CLI
+clap     = { version = "4",    features = ["derive", "env"] }
+
+# Terminal colors & formatting
+colored  = "2"
+
+# Directory traversal
+walkdir  = "2"
+
+# Regex for comment pattern matching
+regex    = "1"
+
+# Serialization (JSON output mode)
+serde      = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# GitHub API client (repo metadata)
+octocrab = "0.38"
+
+# Tree-sitter core + language grammars
+tree-sitter            = "0.20"
+tree-sitter-rust       = "0.20"
+tree-sitter-python     = "0.20"
+tree-sitter-javascript = "0.20"
+
+[profile.release]
+opt-level     = 3
+lto           = true
+codegen-units = 1
+strip         = true
+panic         = "abort"
