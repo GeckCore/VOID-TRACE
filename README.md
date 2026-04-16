@@ -35,8 +35,8 @@ and global **AI-Score**.
 **Prerequisites:** Rust ≥ 1.70, a C compiler (for tree-sitter grammars), `git`.
 
 ```bash
-git clone <this repo>
-cd ai-ghost-hunter
+git clone [<this repo>](https://github.com/GeckCore/VOID-TRACE)
+cd VOID-TRACE
 cargo build --release
 # Binary at: target/release/aigh
 ```
