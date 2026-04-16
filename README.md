@@ -1,290 +1,319 @@
 # 🔍 AI-Ghost-Hunter
 
-Stylometric AST-based fingerprinting of AI-generated code.  
-Analyzes Rust, Python, JavaScript and TypeScript repositories using
-tree-sitter parse trees — not text-matching — to compute a per-file
-and global **AI-Score**.
+Herramienta de análisis de código que detecta si un repositorio fue escrito por una IA (ChatGPT, Claude, Copilot…) usando análisis de árbol sintáctico (AST) y estilometría.
 
 ```
-╔══════════════════════════════════════════════════════════════════════╗
-║     AI-GHOST-HUNTER v1.0  ·  Stylometric AST Code Fingerprinter     ║
-║     Rust · Python · JavaScript · TypeScript                          ║
-╚══════════════════════════════════════════════════════════════════════╝
-
 ╔══════════════════════════════════════════════════════╗
-║  REPOSITORY AI-SCORE   87.3%  ║
-║  ████████████████████████░░░░░░░░░░░░░░░░░░░░░░  ║
-║  ◉ DEFINITE AI GENERATION                           ║
+║  REPOSITORY AI-SCORE   87.3%                         ║
+║  ████████████████████████░░░░░░░░░░░░░░░░░░░░░░      ║
+║  ◉ DEFINITE AI GENERATION                            ║
 ╚══════════════════════════════════════════════════════╝
 
-  CORPUS SUMMARY
-  ◼ 247 files analyzed  ◼ 41,892 LOC  ◼ 3 skipped
-  ◼ Languages:  189 JS  38 TS  12 Python  8 Rust
-
-  FILE                                              AI-SCORE   LANG    LOC   [N]    [C]    [B]    [V]
-  ─────────────────────────────────────────────────────────────────────────────────────────────
-  src/services/authenticationService.js               94.2%     JS    312   91.0%  88.0%  97.0%  90.0%
-  src/api/userController.ts                           91.7%     TS    198   89.0%  82.0%  96.0%  98.0%
-  utils/dataProcessor.py                              88.3%     Py    441   85.0%  91.0%  89.0%  88.0%
+  FILE                                    AI-SCORE  LANG   LOC
+  ──────────────────────────────────────────────────────────────
+  src/services/authenticationService.js    94.2%     JS    312
+  src/api/userController.ts                91.7%     TS    198
+  utils/dataProcessor.py                   88.3%     Py    441
 ```
 
 ---
 
-## Installation
+## Instalación en Windows (paso a paso)
 
-**Prerequisites:** Rust ≥ 1.70, a C compiler (for tree-sitter grammars), `git`.
+> **No necesitas saber programar.** Sigue los pasos en orden. Si algo falla, lee la sección [Solución de errores comunes](#solución-de-errores-comunes).
 
-```bash
+---
+
+### Paso 1 — Instalar Rust
+
+Rust es el lenguaje en el que está escrita la herramienta. Necesitas instalarlo una sola vez.
+
+1. Abre tu navegador y ve a: **https://rustup.rs**
+2. Haz clic en el botón de descarga **"64-bit"** (o 32-bit si tu PC es antiguo)
+3. Se descargará un archivo llamado `rustup-init.exe`
+4. Ejecútalo haciendo doble clic
+5. Aparecerá una ventana negra. Pulsa **`1`** y luego **`Enter`** para la instalación estándar
+6. Espera a que termine (tarda 2-5 minutos)
+7. Cuando diga `Rust is installed now. Great!`, pulsa **Enter** para cerrar
+
+---
+
+### Paso 2 — Instalar Visual C++ Build Tools
+
+Rust necesita un compilador de C para construir las gramáticas de análisis de código.
+
+1. Ve a: **https://visualstudio.microsoft.com/visual-cpp-build-tools/**
+2. Haz clic en **"Download Build Tools"**
+3. Ejecuta el instalador descargado (`vs_BuildTools.exe`)
+4. En la pantalla de selección, marca la casilla **"Desarrollo para el escritorio con C++"**
+5. Haz clic en **"Instalar"** (descarga ~2-3 GB, tarda varios minutos)
+6. Reinicia el PC cuando termine
+
+> **Alternativa más rápida:** Si ya tienes Visual Studio instalado (cualquier versión), esto ya está incluido.
+
+---
+
+### Paso 3 — Instalar Git
+
+Git permite a la herramienta descargar repositorios de GitHub automáticamente.
+
+1. Ve a: **https://git-scm.com/download/win**
+2. Descarga el instalador (el botón grande de descarga)
+3. Ejecútalo y pulsa **"Next"** en todas las pantallas (los valores por defecto están bien)
+4. Haz clic en **"Install"** y luego en **"Finish"**
+
+---
+
+### Paso 4 — Descargar AI-Ghost-Hunter
+
+Tienes dos opciones:
+
+**Opción A — Descargar ZIP (más fácil):**
+
+1. Ve a la página del repositorio en GitHub
+2. Haz clic en el botón verde **"Code"**
+3. Haz clic en **"Download ZIP"**
+4. Extrae el ZIP en `C:\Users\TU_NOMBRE_DE_USUARIO\` — quedará una carpeta como `ai-ghost-hunter-main`
+5. Renómbrala a `ai-ghost-hunter` si quieres (opcional)
+
+**Opción B — Con Git:**
+
+1. Abre **PowerShell** (búscalo en el menú inicio, escribe "powershell")
+2. Escribe estos comandos uno por uno, pulsando Enter después de cada uno:
+
+```powershell
+cd C:\Users\TU_NOMBRE_DE_USUARIO
 git clone https://github.com/GeckCore/VOID-TRACE
 cd VOID-TRACE
+```
+
+> Sustituye `TU_NOMBRE_DE_USUARIO` por el que aparece en tu terminal: `PS C:\Users\mihoy>` → el tuyo es `mihoy`
+
+---
+
+### Paso 5 — Compilar la herramienta
+
+> ⚠️ **MUY IMPORTANTE:** Cierra PowerShell completamente y ábrelo de nuevo antes de este paso. Así detecta Rust correctamente.
+
+1. Abre **PowerShell** (menú inicio → escribe "powershell" → Enter)
+2. Navega a la carpeta del proyecto:
+
+```powershell
+cd C:\Users\TU_NOMBRE_DE_USUARIO\VOID-TRACE
+```
+
+3. Comprueba que Rust está instalado correctamente:
+
+```powershell
+cargo --version
+```
+
+Debe mostrar algo como: `cargo 1.78.0 (xxxxxxx 2024-xx-xx)`
+
+4. Compila la herramienta:
+
+```powershell
 cargo build --release
-# Binary at: target/release/aigh
+```
+
+Verás mucho texto desfilar por pantalla — es normal, está descargando y compilando dependencias. **Tarda 3-8 minutos la primera vez.** Las siguientes veces es instantáneo.
+
+Cuando termine verás algo como:
+
+```
+   Compiling ai-ghost-hunter v1.0.0
+    Finished release [optimized] target(s) in 4m 32s
+```
+
+El programa ya está listo en: `target\release\aigh.exe`
+
+---
+
+### Paso 6 — Usar la herramienta
+
+En PowerShell, desde dentro de la carpeta del proyecto:
+
+```powershell
+# Analizar un repositorio de GitHub (lo descarga automáticamente)
+.\target\release\aigh.exe https://github.com/GeckCore/star-forensics
+
+# Analizar una carpeta local de tu PC
+.\target\release\aigh.exe C:\Users\TU_NOMBRE\alguna-carpeta
+
+# Modo detallado (muestra estadísticas por archivo)
+.\target\release\aigh.exe https://github.com/owner/repo --verbose
+
+# Mostrar todos los archivos sin límite
+.\target\release\aigh.exe https://github.com/owner/repo --all
+
+# Salida en JSON (para scripts o automatización)
+.\target\release\aigh.exe https://github.com/owner/repo --json
 ```
 
 ---
 
-## Usage
+### Paso 7 — Hacerlo disponible desde cualquier carpeta (opcional)
 
-```bash
-# Analyze a GitHub repository (clones to /tmp automatically)
-aigh https://github.com/owner/repo
+Ahora mismo solo funciona si estás dentro de la carpeta del proyecto. Para usarlo desde cualquier lugar:
 
-# Analyze a local directory
-aigh /path/to/project
+1. Crea una carpeta `C:\tools\` (puedes hacerlo desde el Explorador de archivos)
+2. Copia `target\release\aigh.exe` a `C:\tools\aigh.exe`
+3. Añade `C:\tools\` al PATH del sistema:
+   - Pulsa `Win + R`, escribe `sysdm.cpl` y pulsa Enter
+   - Ve a la pestaña **"Opciones avanzadas"**
+   - Haz clic en **"Variables de entorno..."**
+   - En la sección inferior **"Variables del sistema"**, busca `Path` y haz doble clic
+   - Haz clic en **"Nuevo"** y escribe `C:\tools`
+   - Pulsa **OK** en todas las ventanas abiertas
+4. Cierra PowerShell y ábrelo de nuevo
+5. Ahora puedes escribir desde cualquier carpeta:
 
-# With GitHub token (private repos, higher rate limit)
-aigh https://github.com/owner/private-repo --token ghp_xxxxx
-# or: export GITHUB_TOKEN=ghp_xxxxx
-
-# Show raw AST stats per file
-aigh /path/to/project --verbose
-
-# Show all files, not just top-40
-aigh /path/to/project --all
-
-# Machine-readable JSON
-aigh /path/to/project --json | jq '.global_ai_score'
-
-# Only analyze files ≥ 500 bytes
-aigh /path/to/project --min-size 500
-
-# Force re-clone (bypass cache)
-AIGH_REFRESH=1 aigh https://github.com/owner/repo
+```powershell
+aigh https://github.com/GeckCore/star-forensics
 ```
 
 ---
 
-## Architecture
+## Solución de errores comunes
 
+### ❌ `cargo : El término 'cargo' no se reconoce...`
+
+**Causa:** PowerShell no detecta Rust porque estaba abierto durante la instalación, o Rust no terminó de instalarse.
+
+**Solución:**
+1. Cierra **todas** las ventanas de PowerShell
+2. Ábrelo de nuevo desde el menú inicio
+3. Escribe `cargo --version`
+4. Si sigue fallando → reinicia el PC y vuelve a intentarlo
+5. Si sigue fallando tras reiniciar → vuelve a ejecutar `rustup-init.exe` del Paso 1
+
+---
+
+### ❌ `chmod : El término 'chmod' no se reconoce...`
+
+**Causa:** `chmod` es un comando de Linux/Mac. **No existe en Windows y no lo necesitas.**
+
+**Solución:** Ignora ese comando completamente. Sigue con el paso siguiente.
+
+---
+
+### ❌ `sh : El término 'sh' no se reconoce...`
+
+**Causa:** El instalador de Rust para Linux (`curl ... | sh`) no funciona en Windows.
+
+**Solución:** Usa el instalador `.exe` de **https://rustup.rs** como se explica en el Paso 1. No copies comandos de Linux.
+
+---
+
+### ❌ `source ~/.cargo/env`
+
+**Causa:** Comando de Linux. No funciona en PowerShell.
+
+**Solución:** Cierra PowerShell y ábrelo de nuevo. Eso recarga el PATH automáticamente en Windows.
+
+---
+
+### ❌ `error: linker 'link.exe' not found`
+
+**Causa:** Las Visual C++ Build Tools no están instaladas correctamente.
+
+**Solución:**
+1. Vuelve al **Paso 2** y asegúrate de marcar **"Desarrollo para el escritorio con C++"**
+2. Reinicia el PC después de que instale
+3. Vuelve a intentar `cargo build --release`
+
+---
+
+### ❌ El análisis de un repo de GitHub falla con error de red o de autenticación
+
+**Causa:** Repositorio privado, o has hecho muchas peticiones y GitHub te limita temporalmente.
+
+**Solución — Crear un token de GitHub:**
+
+1. Ve a **https://github.com/settings/tokens** (debes estar logueado)
+2. Haz clic en **"Generate new token"** → **"Generate new token (classic)"**
+3. Ponle un nombre cualquiera (ej: `ghost-hunter`)
+4. Marca la casilla **`repo`**
+5. Haz clic en **"Generate token"** al final de la página
+6. Copia el token (empieza por `ghp_`) — **guárdalo, solo se ve una vez**
+7. Úsalo así:
+
+```powershell
+.\target\release\aigh.exe https://github.com/owner/repo --token ghp_XXXXXXXXXXXX
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                        CLI (clap)                            │
-│   --target  --token  --verbose  --json  --top  --min-size    │
-└────────────────────────┬─────────────────────────────────────┘
-                         │
-              ┌──────────▼──────────┐
-              │   Ingestion Module   │
-              │  • GitHub URL?       │
-              │    → git clone --    │
-              │      depth 1         │
-              │  • Local path?       │
-              │    → validate & use  │
-              └──────────┬──────────┘
-                         │ PathBuf
-              ┌──────────▼──────────┐
-              │   File Discovery     │
-              │  • WalkDir           │
-              │  • Skip: node_modules│
-              │    .git target dist  │
-              │  • Filter: .rs .py   │
-              │    .js .ts .jsx .tsx  │
-              └──────────┬──────────┘
-                         │ Vec<PathBuf>
-              ┌──────────▼──────────┐         ┌─────────────────────┐
-              │    AST Engine        │         │  tree-sitter grammars│
-              │  Per file:           │◄────────│  • tree-sitter-rust  │
-              │  1. Read source      │         │  • tree-sitter-python│
-              │  2. Parser::new()    │         │  • tree-sitter-js    │
-              │  3. parse() → Tree   │         └─────────────────────┘
-              │  4. visit() DFS:     │
-              │     • identifiers    │
-              │     • comments       │
-              │     • decision nodes │
-              └──────────┬──────────┘
-                         │ RawStats
-              ┌──────────▼──────────┐
-              │    Metric Engine     │
-              │                      │
-              │  [N] metric_naming() │
-              │  [C] metric_comments │
-              │  [B] metric_format() │
-              │  [V] metric_verbose()│
-              │                      │
-              │  composite_score()   │
-              │  weighted_global()   │
-              └──────────┬──────────┘
-                         │ Vec<FileAnalysis>
-              ┌──────────▼──────────┐
-              │     Reporter         │
-              │  • Terminal (colored)│
-              │  • JSON (serde_json) │
-              └─────────────────────┘
+
+O para no escribirlo cada vez, guárdalo en la sesión de PowerShell:
+
+```powershell
+$env:GITHUB_TOKEN = "ghp_XXXXXXXXXXXX"
+.\target\release\aigh.exe https://github.com/owner/repo
 ```
 
 ---
 
-## Metric Algorithms
+## Referencia rápida de comandos
 
-### [N] Naming Entropy — weight 30%
+```powershell
+# Uso básico
+.\target\release\aigh.exe <URL_de_GitHub_o_ruta_local> [opciones]
 
-AI language models produce identifiers that are:
-- **Systematically prefixed** — `get_`, `set_`, `handle_`, `process_`, `validate_`, `calculate_`, `initialize_`, etc. Humans use these too, but rarely with this frequency across *all* identifiers in a file.
-- **Length-uniform** — LLMs settle in a comfort band of 8–18 chars. Human code mixes short throwaway names (`i`, `tmp`, `buf`, `n`) with long context-specific ones.
-- **Convention-pure** — AI-generated code in a snake_case project is *always* snake_case; camelCase projects are *always* camelCase, even in one-off helpers. Humans drift.
+# Si lo instalaste en C:\tools\ y añadiste al PATH:
+aigh <URL_o_ruta> [opciones]
 
-**Formula:**
-```
-score = (ai_prefix_ratio × 0.35)
-      + (length_uniformity  × 0.25)   ← 1 - normalize(std_dev / 6)
-      + (case_purity        × 0.20)   ← dominant_style / total_ids
-      + (sweet_spot_ratio   × 0.20)   ← ids in [8,18] chars / total
-```
-
----
-
-### [C] Comment Predictability — weight 25%
-
-LLMs explain *what* code does; humans document *why* it was written this way.
-
-20 regex patterns trained on GPT-4/Claude output, targeting:
-- `"This function/method/struct …"` — most common LLM opener
-- `"Returns …"` at line start — docstring-style narration
-- `"Checks if/whether …"`, `"Ensures that …"` — condition descriptions
-- `"Is responsible for …"`, `"Is used to/for …"` — passive voice on code objects
-- `"Converts X to Y"`, `"Iterates over …"` — algorithmic narration
-- `"Simply returns/gets/creates …"` — the word "simply" is a strong LLM tell
-
-**Formula:**
-```
-score = (pattern_match_ratio × 0.55)
-      + (comment_density      × 0.25)   ← comments / code_lines
-      + (avg_word_count_score × 0.20)   ← normalize([4, 20] words/comment)
+# Opciones:
+  --token <TOKEN>     Token de GitHub para repos privados o límite de API
+  --min-size <BYTES>  Ignorar archivos menores a N bytes (default: 150)
+  --verbose           Mostrar estadísticas detalladas por archivo
+  --top <N>           Cuántos archivos mostrar en la tabla (default: 40)
+  --all               Mostrar todos los archivos sin límite
+  --json              Salida en formato JSON
 ```
 
 ---
 
-### [B] Boilerplate Consistency — weight 25%
+## Qué detecta y cómo
 
-AI generators output formatting that even the best human developers can't
-sustain over thousands of lines:
+La herramienta analiza el **árbol sintáctico real del código** (no busca palabras clave), midiendo 4 señales:
 
-- **Indentation std-dev ≤ 2** — machine-perfect depth increments
-- **No mixed tabs + spaces** — humans fix this, but old files drift
-- **Line-length distribution** — AI produces a narrow bell curve; human code has long outliers (URLs, debug strings, SQL)
-- **Trailing whitespace = 0** — AI never leaves trailing whitespace
-- **Blank-line interval regularity** — AI inserts blank lines with structural predictability (function boundaries always, never randomly)
+| Señal | Qué mide | Por qué delata a la IA |
+|-------|----------|------------------------|
+| **[N] Naming Entropy** | Predictibilidad de nombres de variables | Las IAs usan prefijos como `get_`, `handle_`, `validate_` de forma muy sistemática |
+| **[C] Comment Predictability** | Patrones gramaticales en comentarios | Las IAs explican *qué* hace el código; los humanos explican *por qué* |
+| **[B] Boilerplate Consistency** | Consistencia de formato y espaciado | Las IAs nunca dejan espacios al final de línea ni mezclan tabs y espacios |
+| **[V] Complexity / Verbosity** | Líneas de código por punto de decisión | Las IAs escriben 18-35 líneas por rama; los humanos escriben 6-12 |
 
-**Formula:**
-```
-score = (indent_std_score     × 0.30)
-      + (line_len_std_score    × 0.25)
-      + (trailing_ws_score     × 0.20)
-      + (blank_line_regularity × 0.25)
-      − mixed_indent_penalty  (0.35 if both tabs AND spaces present)
-```
+### Umbrales de puntuación
 
----
+| Puntuación | Veredicto |
+|------------|-----------|
+| ≥ 85% | Generación IA definitiva |
+| 70–85% | Alta probabilidad de IA |
+| 55–70% | Señal moderada de IA |
+| 40–55% | Ambiguo / señales mixtas |
+| 25–40% | Probablemente humano |
+| < 25% | Huella humana fuerte |
 
-### [V] Complexity / Verbosity — weight 20%
+### Lenguajes soportados
 
-**McCabe cyclomatic complexity** = `(decision_nodes) + 1`
-
-Decision nodes counted from AST: `if`, `match`/`switch`, `while`, `for`, `loop`, `try/catch`, ternary `?:`.
-
-Empirical baseline from open-source corpora (Linux kernel, CPython, React):
-| Source     | LOC / cyclomatic unit |
-|------------|-----------------------|
-| Human (p50)| 6–12                  |
-| AI (p50)   | 18–35                 |
-
-AI over-writes because LLMs optimize for *apparent clarity*: extra error-handling branches, named intermediate variables, guard clauses, and docstrings for every helper.
-
-**Formula:**
-```
-loc_per_branch = code_lines / (decisions + 1)
-verbosity_score = normalize(loc_per_branch, range=[6, 30])
-id_density      = normalize(identifiers / code_lines, max=3.0)
-
-score = (verbosity_score × 0.65) + (id_density × 0.35)
-```
+`.rs` (Rust) · `.py` (Python) · `.js` / `.jsx` (JavaScript) · `.ts` / `.tsx` (TypeScript)
 
 ---
 
-### Composite Score
+## Resumen visual del proceso en Windows
 
 ```
-ai_score = (naming_entropy  × 0.30)
-         + (comment_predict × 0.25)
-         + (boilerplate     × 0.25)
-         + (verbosity       × 0.20)
-```
-
-**Global score** = LOC-weighted mean across all analyzed files.
-
----
-
-## Score Thresholds
-
-| Score     | Verdict              |
-|-----------|----------------------|
-| ≥ 85%     | Definite AI          |
-| 70–85%    | High AI probability  |
-| 55–70%    | Moderate AI signal   |
-| 40–55%    | Ambiguous            |
-| 25–40%    | Likely human         |
-| < 25%     | Strong human signal  |
-
----
-
-## Known Limitations
-
-1. **Calibrated on English-language identifiers.** Non-ASCII variable names will reduce scoring accuracy on all four axes.
-2. **Grammar coverage is partial for TypeScript.** The JavaScript grammar handles TSX/TS reasonably but misses type-annotation nodes; some TypeScript-specific identifiers may be undercounted.
-3. **Human developers who follow strict style guides** (Google style, rustfmt, black) will score higher on [B] than their actual authorship warrants. This is by design — such code *is* more consistent, regardless of author.
-4. **Minified or generated code** (Webpack bundles, protobuf output) will produce false positives. Use `--min-size` to raise the floor.
-5. **The tool is probabilistic, not forensic.** Scores are evidence, not proof.
-
----
-
-## JSON Output Schema
-
-```json
-{
-  "global_ai_score": 0.873,
-  "global_verdict": "definite_ai",
-  "files_analyzed": 247,
-  "files_skipped": 3,
-  "files": [
-    {
-      "path": "src/services/authService.js",
-      "language": "JS",
-      "ai_score": 0.942,
-      "line_count": 312,
-      "verdict": "definite_ai",
-      "metrics": {
-        "naming_entropy": 0.910,
-        "comment_predictability": 0.880,
-        "boilerplate_consistency": 0.970,
-        "complexity_verbosity": 0.900
-      },
-      "raw": {
-        "identifiers": 284,
-        "comments": 41,
-        "decision_nodes": 18,
-        "code_lines": 271,
-        "total_lines": 312
-      }
-    }
-  ]
-}
+  1. Descarga rustup-init.exe   →  https://rustup.rs
+             ↓
+  2. Descarga Build Tools (C++) →  https://visualstudio.microsoft.com/visual-cpp-build-tools/
+             ↓
+  3. Descarga Git               →  https://git-scm.com/download/win
+             ↓
+  4. Reinicia el PC
+             ↓
+  5. Abre PowerShell → escribe:
+       cd C:\Users\TU_NOMBRE\ai-ghost-hunter
+             ↓
+  6. cargo build --release      (espera 3-8 min, solo la primera vez)
+             ↓
+  7. .\target\release\aigh.exe https://github.com/owner/repo
 ```
